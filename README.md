@@ -1,3 +1,8 @@
+## ENV Variables
+
+Before you run this app first time, set the env variables (.env file):
+NODE_PATH=src
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
