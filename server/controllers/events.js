@@ -10,7 +10,7 @@ const generateRandomMembers = () => {
   return members;
 };
 
-const events = [
+let events = [
   {
     id: uuid(),
     name: faker.lorem.sentence(),
@@ -45,4 +45,36 @@ const events = [
 
 exports.getEvents = (req, res) => {
   res.json(events);
+};
+
+exports.addEvent = (req, res) => {
+  const newEvent = req.body;
+  newEvent.id = uuid();
+  events.push(newEvent);
+  res.status(201).json({ message: 'Event created' });
+};
+
+exports.deleteEvent = (req, res) => {
+  const { id } = req.body;
+  events = events.filter(event => event.id !== id);
+  res.status(204).json({ message: 'Event deleted' });
+};
+
+exports.getEvent = (req, res) => {
+  const { id } = req.params;
+  const event = events.find(item => item.id === id);
+  return event
+    ? res.json(event)
+    : res.status(404).json({ message: 'Event not found' });
+};
+
+exports.updateEvent = (req, res) => {
+  const { id } = req.params;
+  const updatedEvent = req.body;
+  const updatedEventsIndex = events.findIndex(event => event.id === id);
+  if (updatedEventsIndex === -1) {
+    res.status(404).json({ message: 'Event not found' });
+  }
+  events[updatedEventsIndex] = { ...updatedEvent };
+  res.json(events[updatedEventsIndex]);
 };
