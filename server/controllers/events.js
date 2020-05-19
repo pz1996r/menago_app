@@ -1,5 +1,6 @@
 const { v1: uuid } = require('uuid');
 const faker = require('faker');
+const { validationResult } = require('express-validator');
 
 const generateRandomMembers = () => {
   const members = [];
@@ -48,10 +49,14 @@ exports.getEvents = (req, res) => {
 };
 
 exports.addEvent = (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors.array());
+  }
   const newEvent = req.body;
   newEvent.id = uuid();
   events.push(newEvent);
-  res.status(201).json({ message: 'Event created' });
+  return res.status(201).json({ message: 'Event created' });
 };
 
 exports.deleteEvent = (req, res) => {
@@ -69,6 +74,10 @@ exports.getEvent = (req, res) => {
 };
 
 exports.updateEvent = (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors.array());
+  }
   const { id } = req.params;
   const updatedEvent = req.body;
   const updatedEventsIndex = events.findIndex(event => event.id === id);
@@ -76,5 +85,5 @@ exports.updateEvent = (req, res) => {
     res.status(404).json({ message: 'Event not found' });
   }
   events[updatedEventsIndex] = { ...updatedEvent };
-  res.json(events[updatedEventsIndex]);
+  return res.json(events[updatedEventsIndex]);
 };
